@@ -10,7 +10,7 @@ A lightweight desktop currency converter for Windows.
 - Input validation covers: non-numeric amounts, same-currency selection
 - No database, no config files, no local state — stateless on every conversion
 
-Supported currencies: USD, SGD, EUR, GBP, JPY
+Supported currencies: USD, SGD, EUR, GBP, JPY, AUD, CHF
 
 ## Tech Stack
 
