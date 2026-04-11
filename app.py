@@ -68,7 +68,7 @@ def on_convert(amount_var, from_var, to_var, result_label, rate_label, time_labe
 
 # Builds and launches the main application window.
 def build_gui():
-    currencies = ["USD", "SGD", "EUR", "GBP", "JPY"]
+    currencies = ["USD", "SGD", "EUR", "GBP", "JPY", "AUD", "CHF"]
 
     root = tk.Tk()
     root.title("FX Converter")
