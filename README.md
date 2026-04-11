@@ -7,7 +7,7 @@ Fetches live exchange rates via Yahoo Finance and displays the converted amount,
 ## Features
 
 - Live FX rates pulled from Yahoo Finance
-- Supports USD, SGD, EUR, GBP, JPY
+- Supports USD, SGD, EUR, GBP, JPY, AUD, CHF
 - Displays converted amount, mid-market rate, and fetch timestamp
 - Input validation for non-numeric amounts and same-currency conversion
 
