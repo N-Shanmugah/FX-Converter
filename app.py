@@ -2,6 +2,23 @@ import yfinance as yf
 from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, messagebox
+import os
+import sys
+
+# When running as a .exe (PyInstaller), use the folder the exe lives in.
+# When running as a .py script, use the folder the script lives in.
+if getattr(sys, "frozen", False):
+    _app_dir = os.path.dirname(sys.executable)
+else:
+    _app_dir = os.path.dirname(os.path.abspath(__file__))
+
+_log_path = os.path.join(_app_dir, "fx_converter_log.txt")
+
+# Appends a single plain-English line to the log file, with the current date and time.
+def write_log(message):
+    timestamp = datetime.now().strftime("%d %b %Y, %I:%M %p")
+    with open(_log_path, "a", encoding="utf-8") as f:
+        f.write(f"{timestamp} — {message}\n")
 
 # Fetches the live exchange rate between two currencies using Yahoo Finance.
 # Returns a dict with the rate, the currency pair ticker, and a timestamp.
@@ -14,7 +31,7 @@ def get_fx_rate(from_currency, to_currency):
         raise ValueError(f"No data returned for {ticker_symbol}. Check the currency codes.")
 
     rate = data["Close"].iloc[-1]
-    fetched_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fetched_at = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
     return {
         "ticker": ticker_symbol,
@@ -34,11 +51,13 @@ def on_convert(amount_var, from_var, to_var, result_label, rate_label, time_labe
     try:
         amount = float(amount_var.get().replace(",", ""))
     except ValueError:
+        write_log(f"Invalid amount entered: '{amount_var.get()}' is not a number.")
         messagebox.showerror("Invalid input", "Please enter a valid number in the Amount field.")
         return
 
     # Guard against converting a currency to itself.
     if from_currency == to_currency:
+        write_log(f"Conversion skipped: From and To currencies are both {from_currency}.")
         messagebox.showwarning("Same currency", "From and To currencies are the same.")
         return
 
@@ -61,7 +80,13 @@ def on_convert(amount_var, from_var, to_var, result_label, rate_label, time_labe
         rate_label.config(text=f"Rate: 1 {from_currency} = {fx['rate']:.6f} {to_currency}")
         time_label.config(text=f"Fetched at: {fx['fetched_at']}")
 
+        write_log(
+            f"Converted {amount_fmt} {from_currency} to {converted_fmt} {to_currency} "
+            f"(rate: 1 {from_currency} = {fx['rate']:.6f} {to_currency})."
+        )
+
     except Exception as e:
+        write_log(f"Failed to fetch rate for {from_currency} to {to_currency}. Reason: {e}")
         messagebox.showerror("Fetch failed", str(e))
         result_label.config(text="Result will appear here")
 
